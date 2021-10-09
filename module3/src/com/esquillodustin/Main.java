@@ -9,27 +9,29 @@ public class Main {
         // write your code here
 
         CardStack deckOfCards = createDeck();
+        CardStack hand = new CardStack();
+        CardStack pile = new CardStack();
 
         Scanner scanner = new Scanner(System.in);
 
         int round = 1;
+        
+        while (!deckOfCards.isDeckStackEmpty()){
 
-        while (!deckOfCards.isPlayerDeckStackEmpty()){
-
-            playRound(round, deckOfCards);
+            playRound(round, deckOfCards, hand, pile);
             scanner.nextLine();
 
             //to check what is the top element
-            System.out.println("Player Deck Peek - " + deckOfCards.peekPlayerDeckStack());
-            System.out.println("Current Hand Peek - " + deckOfCards.peekCurrentPlayerCards());
-            System.out.println("Discarded Pile Peek - " + deckOfCards.peekDiscardedPileStack());
+            System.out.println("Player Deck Peek - " + deckOfCards.peekStack());
+            System.out.println("Current Hand Peek - " + hand.peekStack());
+            System.out.println("Discarded Pile Peek - " + pile.peekStack());
             System.out.print("\n");
 
             round++;
 
         }
 
-        if (deckOfCards.isPlayerDeckStackEmpty()){
+        if (deckOfCards.isDeckStackEmpty()){
 
             System.out.println("\nThere are no remaining cards available on the Player Deck");
 
@@ -38,7 +40,7 @@ public class Main {
 
     }
 
-    private static void playRound (int round, CardStack deck){
+    private static void playRound (int round, CardStack deck, CardStack hand, CardStack pile){
 
         //for randomization of the commands
         Random value = new Random();
@@ -69,7 +71,7 @@ public class Main {
                     randDraw = deck.getPlayerDeckCards();
                     System.out.println("The player draws: " + randDraw + " cards!");
                     scanner.nextLine();
-                    deck.playerDraw(randDraw);
+                    playerDraw(randDraw, deck, hand);
 
                 }
 
@@ -77,17 +79,17 @@ public class Main {
 
                     System.out.println("The player draws: " + randDraw + " cards!");
                     scanner.nextLine();
-                    deck.playerDraw(randDraw);
+                    playerDraw(randDraw, deck, hand);
 
                 }
 
                 scanner.nextLine();
                 System.out.println("Printing the current cards on hold");
-                deck.printCurrentPlayerCards();
+                hand.printCards();
                 scanner.nextLine();
 
                 System.out.println("Remaining Cards on the Player Deck: " + deck.getPlayerDeckCards());
-                System.out.println ("Remaining Cards on the Discarded Pile: " + deck.getDiscardedPileCards());
+                System.out.println ("Remaining Cards on the Discarded Pile: " + pile.getDiscardedPileCards());
 
 
             }
@@ -98,11 +100,11 @@ public class Main {
                 System.out.println("Player Deck does not have sufficient cards to be drawn ");
 
                 System.out.println("Printing the current cards on hold");
-                deck.printCurrentPlayerCards();
+                hand.printCards();
                 scanner.nextLine();
 
                 System.out.println("Remaining Cards on the Player Deck: " + deck.getPlayerDeckCards());
-                System.out.println ("Remaining Cards on the Discarded Pile: " + deck.getDiscardedPileCards());
+                System.out.println ("Remaining Cards on the Discarded Pile: " + pile.getDiscardedPileCards());
 
             }
 
@@ -111,34 +113,34 @@ public class Main {
         else if (randCommand == 2){ // 2 is equal to discard Command
 
             //if the current cards on hand is empty
-            if (deck.getPlayerCurrentCards() == 0){
+            if (hand.getCurrentCards() == 0){
 
                 System.out.println("The selected command is Discard! ");
                 scanner.nextLine();
 
                 System.out.println("The player does not have any remaining cards on his/her hand ");
                 System.out.println("Remaining Cards on the Player Deck: " + deck.getPlayerDeckCards());
-                System.out.println ("Remaining Cards on the Discarded Pile: " + deck.getDiscardedPileCards());
+                System.out.println ("Remaining Cards on the Discarded Pile: " + pile.getDiscardedPileCards());
 
                 scanner.nextLine();
             }
 
 
             //if there are cards on hand
-            else if (deck.getPlayerCurrentCards() > 0){
+            else if (hand.getCurrentCards() > 0){
 
                 System.out.println("The selected command is Discard! ");
                 scanner.nextLine();
-                int input = playerInputForDiscard(deck);
-                deck.playerDiscard(input);
+                int input = playerInputForDiscard(hand);
+                playerDiscard(input, hand, pile);
                 scanner.nextLine();
 
                 System.out.println("Printing the current cards on hold");
-                deck.printCurrentPlayerCards();
+                hand.printCards();
                 scanner.nextLine();
 
                 System.out.println("Remaining Cards on the Player Deck: " + deck.getPlayerDeckCards());
-                System.out.println ("Remaining Cards on the Discarded Pile: " + deck.getDiscardedPileCards());
+                System.out.println ("Remaining Cards on the Discarded Pile: " + pile.getDiscardedPileCards());
 
             }
 
@@ -147,14 +149,14 @@ public class Main {
         else if (randCommand == 3){ // 3 is equal to get from discarded pile command
 
             //If there are no cards available
-            if (deck.getDiscardedPileCards() == 0){
+            if (pile.getDiscardedPileCards() == 0){
                 System.out.println("The selected command is Get! ");
                 scanner.nextLine();
 
-                if (deck.getPlayerCurrentCards() > 0){
+                if (hand.getCurrentCards() > 0){
 
                     System.out.println("Printing the current cards on hold");
-                    deck.printCurrentPlayerCards();
+                    hand.printCards();
                     scanner.nextLine();
 
                 }
@@ -172,19 +174,19 @@ public class Main {
             }
 
             //If there are cards available
-            else if (deck.getDiscardedPileCards() > 0){
+            else if (pile.getDiscardedPileCards() > 0){
 
                 System.out.println("The selected command is Get! ");
-                int input = playerInputForGet(deck);
-                deck.playerGetFromDiscarded(input);
+                int input = playerInputForGet(pile);
+                playerGet(input, hand, pile);
                 scanner.nextLine();
 
                 System.out.println("Printing the current cards on hold");
-                deck.printCurrentPlayerCards();
+                hand.printCards();
 
                 scanner.nextLine();
                 System.out.println("Remaining Cards on the Player Deck: " + deck.getPlayerDeckCards());
-                System.out.println ("Remaining Cards on the Discarded Pile: " + deck.getDiscardedPileCards());
+                System.out.println ("Remaining Cards on the Discarded Pile: " + pile.getDiscardedPileCards());
 
             }
 
@@ -194,7 +196,45 @@ public class Main {
 
     }
 
-    private static int playerInputForGet(CardStack deck){
+    private static void playerDraw(int number, CardStack deck, CardStack hand){
+
+        for (int i = 0; i < number; i ++) {
+
+            Card currentCard = deck.popStack();
+            hand.pushStack(currentCard);
+            deck.setPlayerDeckCards(deck.getPlayerDeckCards() - 1);
+            hand.setCurrentCards(hand.getCurrentCards() + 1);
+
+        }
+
+    }
+
+    private static void playerDiscard(int number, CardStack hand, CardStack pile){
+
+        for (int i = 0; i < number; i ++) {
+
+            Card currentCard = hand.popStack();
+            pile.pushStack(currentCard);
+            hand.setCurrentCards(hand.getCurrentCards() - 1);
+            pile.setDiscardedPileCards(pile.getDiscardedPileCards() + 1);
+
+        }
+    }
+
+    private static void playerGet(int number, CardStack hand, CardStack pile){
+
+        for (int i = 0; i < number; i ++) {
+
+            Card currentCard = pile.popStack();
+            hand.pushStack(currentCard);
+            hand.setCurrentCards(hand.getCurrentCards() + 1);
+            pile.setDiscardedPileCards(pile.getDiscardedPileCards() - 1);
+
+        }
+
+    }
+
+    private static int playerInputForGet(CardStack pile){
 
         int value;
 
@@ -207,7 +247,7 @@ public class Main {
 
             value = scanner.nextInt();
 
-            if (deck.getDiscardedPileCards() >= value){
+            if (pile.getDiscardedPileCards() >= value){
 
                 break;
 
@@ -216,21 +256,21 @@ public class Main {
             //if the player has at least one card on discarded pile
             //but the player typed a value that is greater than the number of cards
             //that are available in discarded pile
-            else if (deck.getDiscardedPileCards() > 0 && deck.getDiscardedPileCards() < value) {
+            else if (pile.getDiscardedPileCards() > 0 && pile.getDiscardedPileCards() < value) {
 
                 continue;
 
             }
 
 
-        }while(deck.getDiscardedPileCards() > 0);
+        }while(pile.getDiscardedPileCards() > 0);
 
         return value;
 
 
     }
 
-    private static int playerInputForDiscard(CardStack deck){
+    private static int playerInputForDiscard(CardStack hand){
 
         int value;
 
@@ -243,7 +283,7 @@ public class Main {
 
             value = scanner.nextInt();
 
-            if (deck.getPlayerCurrentCards() >= value){
+            if (hand.getCurrentCards() >= value){
 
                 break;
 
@@ -252,22 +292,22 @@ public class Main {
             //if the player has at least one card on hold
             //but the player typed a value that is greater than the number of cards
             //he/she currently holds
-            else if (deck.getPlayerCurrentCards() > 0 && deck.getPlayerCurrentCards() < value) {
+            else if (hand.getCurrentCards() > 0 && hand.getCurrentCards() < value) {
 
                 continue;
 
             }
 
 
-        }while(deck.getPlayerCurrentCards() > 0);
+        }while(hand.getCurrentCards() > 0);
 
         return value;
 
     }
 
-    private static boolean checkPlayerDeckDraw(CardStack card){
+    private static boolean checkPlayerDeckDraw(CardStack deck){
 
-        if (card.getPlayerDeckCards() > 0){
+        if (deck.getPlayerDeckCards() > 0){
 
             return true;
 
@@ -283,59 +323,59 @@ public class Main {
 
     private static CardStack createDeck(){
 
-        CardStack stack = new CardStack();
+        CardStack deck = new CardStack();
 
         //Ace
-        stack.pushPlayerDeckStack(new Card(1 , "Ace of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(2, "Ace of Cloves"));
-        stack.pushPlayerDeckStack(new Card(3, "Ace of Spades"));
+        deck.pushStack(new Card(1 , "Ace of Diamonds"));
+        deck.pushStack(new Card(2, "Ace of Cloves"));
+        deck.pushStack(new Card(3, "Ace of Spades"));
 
         //Two
-        stack.pushPlayerDeckStack(new Card(4, "Two of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(5, "Two of Cloves"));
-        stack.pushPlayerDeckStack(new Card(6, "Two of Spades"));
+        deck.pushStack(new Card(4, "Two of Diamonds"));
+        deck.pushStack(new Card(5, "Two of Cloves"));
+        deck.pushStack(new Card(6, "Two of Spades"));
 
         //Three
-        stack.pushPlayerDeckStack(new Card(7, "Three of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(8, "Three of Cloves"));
-        stack.pushPlayerDeckStack(new Card(9, "Three of Spades"));
+        deck.pushStack(new Card(7, "Three of Diamonds"));
+        deck.pushStack(new Card(8, "Three of Cloves"));
+        deck.pushStack(new Card(9, "Three of Spades"));
 
         //Four
-        stack.pushPlayerDeckStack(new Card(10, "Four of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(11, "Four of Cloves"));
-        stack.pushPlayerDeckStack(new Card(12, "Four of Spades"));
+        deck.pushStack(new Card(10, "Four of Diamonds"));
+        deck.pushStack(new Card(11, "Four of Cloves"));
+        deck.pushStack(new Card(12, "Four of Spades"));
 
         //Five
-        stack.pushPlayerDeckStack(new Card(13, "Five of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(14, "Five of Cloves"));
-        stack.pushPlayerDeckStack(new Card(15, "Five of Spades"));
+        deck.pushStack(new Card(13, "Five of Diamonds"));
+        deck.pushStack(new Card(14, "Five of Cloves"));
+        deck.pushStack(new Card(15, "Five of Spades"));
 
         //Six
-        stack.pushPlayerDeckStack(new Card(16, "Six of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(17, "Six of Cloves"));
-        stack.pushPlayerDeckStack(new Card(18, "Six of Spades"));
+        deck.pushStack(new Card(16, "Six of Diamonds"));
+        deck.pushStack(new Card(17, "Six of Cloves"));
+        deck.pushStack(new Card(18, "Six of Spades"));
 
         //Seven
-        stack.pushPlayerDeckStack(new Card(19, "Seven of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(20, "Seven of Cloves"));
-        stack.pushPlayerDeckStack(new Card(21, "Seven of Spades"));
+        deck.pushStack(new Card(19, "Seven of Diamonds"));
+        deck.pushStack(new Card(20, "Seven of Cloves"));
+        deck.pushStack(new Card(21, "Seven of Spades"));
 
         //Eight
-        stack.pushPlayerDeckStack(new Card(22, "Eight of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(23, "Eight of Cloves"));
-        stack.pushPlayerDeckStack(new Card(24, "Eight of Spades"));
+        deck.pushStack(new Card(22, "Eight of Diamonds"));
+        deck.pushStack(new Card(23, "Eight of Cloves"));
+        deck.pushStack(new Card(24, "Eight of Spades"));
 
         //Nine
-        stack.pushPlayerDeckStack(new Card(25, "Nine of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(26, "Nine of Cloves"));
-        stack.pushPlayerDeckStack(new Card(27, "Nine of Spades"));
+        deck.pushStack(new Card(25, "Nine of Diamonds"));
+        deck.pushStack(new Card(26, "Nine of Cloves"));
+        deck.pushStack(new Card(27, "Nine of Spades"));
 
         //Ten
-        stack.pushPlayerDeckStack(new Card(28, "Ten of Diamonds"));
-        stack.pushPlayerDeckStack(new Card(29, "Ten of Cloves"));
-        stack.pushPlayerDeckStack(new Card(30, "Ten of Spades"));
+        deck.pushStack(new Card(28, "Ten of Diamonds"));
+        deck.pushStack(new Card(29, "Ten of Cloves"));
+        deck.pushStack(new Card(30, "Ten of Spades"));
 
-        return stack;
+        return deck;
 
     }
 }

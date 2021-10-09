@@ -6,132 +6,70 @@ import java.util.ListIterator;
 
 public class CardStack {
 
-    private LinkedList<Card> playerDeckStack;
-    private LinkedList<Card> currentPlayerCards;
-    private LinkedList<Card> discradedPileStack;
+    private LinkedList<Card> deckStack;
 
     private int playerDeckCards = 30;
     private int discardedPileCards = 0;
     private int currentCards = 0;
 
+
     public CardStack(){
 
-        playerDeckStack = new LinkedList<Card>();
-        discradedPileStack = new LinkedList<Card>();
-
-        currentPlayerCards = new LinkedList<Card>();
-
+        deckStack = new LinkedList<Card>();
 
     }
 
-    public void pushPlayerDeckStack (Card card){
+    public void pushStack (Card card){
 
-        playerDeckStack.push(card);
-
-    }
-
-    public boolean isPlayerDeckStackEmpty(){
-
-        return playerDeckStack.isEmpty();
+        deckStack.push(card);
 
     }
 
-    public Card peekPlayerDeckStack (){
+    public boolean isDeckStackEmpty(){
 
-        return playerDeckStack.peek();
-
-    }
-
-    public Card popPlayerDeckStack(){
-
-        return playerDeckStack.pop();
+        return deckStack.isEmpty();
 
     }
 
-    public void pushCurrentPlayerCards(Card card){
+    public Card peekStack (){
 
-        currentPlayerCards.push(card);
-
-    }
-
-    public Card peekCurrentPlayerCards(){
-
-        return currentPlayerCards.peek();
+        return deckStack.peek();
 
     }
 
-    public Card popCurrentPlayerCards(){
+    public Card popStack(){
 
-        return currentPlayerCards.pop();
-
-    }
-
-    public void pushDiscardedPileStack(Card card){
-
-        discradedPileStack.push(card);
+        return deckStack.pop();
 
     }
 
-    public Card popDiscardedPileStack(){
+    public void printCards(){
 
-        return discradedPileStack.pop();
-    }
-
-    public Card peekDiscardedPileStack(){
-
-        return discradedPileStack.peek();
-
-    }
-
-    public void playerDraw(int number){
-
-
-        for (int i = 0; i < number; i ++){
-
-            Card currentCard = popPlayerDeckStack();
-            pushCurrentPlayerCards(currentCard);
-            currentCards++;
-            playerDeckCards--;
-
-        }
-
-    }
-
-    public void playerDiscard(int number){
-
-        for (int i = 0; i < number; i ++){
-
-            Card currentCard = popCurrentPlayerCards();
-            pushDiscardedPileStack(currentCard);
-            currentCards--;
-            discardedPileCards++;
-
-        }
-
-    }
-
-    public void playerGetFromDiscarded(int number){
-
-        for (int i = 0; i < number; i++){
-
-            Card currentCard = popDiscardedPileStack();
-            pushCurrentPlayerCards(currentCard);
-            currentCards++;
-            discardedPileCards--;
-
-        }
-
-    }
-
-    public void printCurrentPlayerCards(){
-
-        ListIterator<Card> cardIterator = currentPlayerCards.listIterator();
+        ListIterator<Card> cardIterator = deckStack.listIterator();
 
         while (cardIterator.hasNext()){
 
             System.out.println(cardIterator.next());
 
         }
+
+    }
+
+    public void setPlayerDeckCards(int value){
+
+        playerDeckCards = value;
+
+    }
+
+    public void setDiscardedPileCards(int value){
+
+        discardedPileCards = value;
+
+    }
+
+    public void setCurrentCards(int value){
+
+        currentCards = value;
 
     }
 
@@ -147,10 +85,11 @@ public class CardStack {
 
     }
 
-    public int getPlayerCurrentCards(){
+    public int getCurrentCards(){
 
         return currentCards;
 
     }
+
 
 }
