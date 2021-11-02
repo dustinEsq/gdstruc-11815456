@@ -15,7 +15,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         int round = 1;
-        
+
         while (!deckOfCards.isDeckStackEmpty()){
 
             playRound(round, deckOfCards, hand, pile);
